@@ -1,15 +1,11 @@
-class Enemigo{
+class Enemigo: public Entidad{
 	public:
 		//variables
-		float x;
-		float y;
-		BITMAP* sprite;
-		BITMAP* b_vida;
+        static int points;
 		int type;
 		int cont;
-		int vida;
 		//funciones
-		Enemigo(int x, int y, int type);
+		Enemigo(float x, float y, int type);
 		~Enemigo();
 		void action();
 		void Movimiento();
@@ -18,8 +14,9 @@ class Enemigo{
 };
 list<Enemigo*>Enemigos;
 
+int Enemigo::points = 0;
 
-Enemigo::Enemigo(int x, int y, int type){
+Enemigo::Enemigo(float x, float y, int type){
 	this->x = x;
 	this->y = y;
 	this->sprite = load_bitmap("Enemigo.bmp",NULL);
@@ -58,6 +55,9 @@ void Enemigo::action(){
 		}
 	}
 	this->Movimiento();
+    if(this->vida <= 0){
+        points += 50;
+    }
 	if(this->vida <= 0 or this->x > SCREEN_W){
 		delete this; // Eliminar nave enemiga si ya no tiene vida o esta fuera del lienzo
 	}

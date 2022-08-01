@@ -1,11 +1,6 @@
-class Personaje{
-	public:
-		int x;
-		int y;
-		BITMAP* sprite;
-		BITMAP* b_vida;
+class Personaje: public Entidad{
+public:
 		float vel;
-		int vida;
 		void mov();
 		Personaje();
 };

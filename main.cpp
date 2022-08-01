@@ -1,18 +1,31 @@
+/*
+********************************************************
+****       Jhonattan Aponte - 20212578062 Gr303     ****
+****       David Casallas - 20212578047 Gr303       ****
+****    Fantasmas vs Fantasmas que lanzan negros    ****
+********************************************************
+*/
+
 #include <allegro.h>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
 #include <list>
 #include <math.h>
+#include <string>
+#include <time.h>
 
 BITMAP *lienzo;
 
+#include "Entidad.h"
 #include "Alarm.h"
 #include "Bala.h"
 #include "Personaje.h"
 #include "Enemigo.h"
 #include "Background.h"
+
 
 Alarm *Timer = new Alarm(); 
 
@@ -20,31 +33,73 @@ void init();
 void deinit();
 void crear();
 void Enemigo_action();
+char* leerDatos(int x, int y, int color, int max, FONT *font);
+
+string getDate(){
+   time_t t = time(NULL);
+   struct tm tiempoLocal = *localtime(&t);
+   char fechaHora[70];
+   char *formato = "%Y-%m-%d-%H:%M:%S";
+   int bytesEscritos = strftime(fechaHora, sizeof fechaHora, formato, &tiempoLocal);
+   if (bytesEscritos != 0){
+      return fechaHora;
+   }
+   return "ERROR";
+}
+
 
 int main(){
 	init();
-	
-	lienzo = create_bitmap(SCREEN_W, SCREEN_H);
+	FONT *fuente = load_font("minecraft.pcx", NULL, NULL);
+	char *nombre = leerDatos(255, 255, 'w', 50, fuente);
+    ofstream points("points.txt", ios::app);
+    lienzo = create_bitmap(SCREEN_W, SCREEN_H);
 	Personaje *fantasma = new Personaje();
 	Background* background = new Background("fondo.bmp");
-	
 	srand(time(NULL)); // hace que los numeros sean aleatorios
-	
-	while (!key[KEY_ESC] && fantasma->vida > 0){
-		background->action() ; // mostrar el fondo
+	bool vivo = true;
+	while (!key[KEY_ESC] && vivo){
+        // Imprime el puntaje en la pantalla
+        //textout_ex(lienzo, font, "Puntos: " + to_string(Enemigo::points), 10, 10, makecol(255, 255, 255), -1);
+		//textprintf_ex(lienzo, font, 300, 350, makecol(255, 255, 255), -1, "Puntos: %d", 5);
+        background->action(); // mostrar el fondo
 		crear();
 		Enemigo_action();
+		textprintf(screen, fuente, 240, 485, 'f', "Puntos: %d", Enemigo::points);
 		if (fantasma->vida > 0){
 			fantasma->mov(); // mover la nave si su vida es mayor a 0
-		} 	
+		}
 		draw_sprite(screen, lienzo ,0 ,0);
 		clear_to_color(lienzo, 0x000000);
+		if(fantasma->vida <= 0){
+			vivo = false;
+		}
 	}
-
+    // Imprime el puntaje en el archivo points.txt con fecha y hora
+    points << "Nombre: " << nombre << " Puntaje: " << Enemigo::points << " Realizado el " << getDate() << endl;
+	points.close();
 	deinit();
 	return 0;
 }
 END_OF_MAIN();
+
+char* leerDatos(int x, int y, int color, int max, FONT *font){
+	char it;
+	char* cadena;
+	
+	int i = 0;
+	textprintf(screen, font, x-150, y-80, color, "Ingrese su nombre:");
+	do{
+		it=readkey();
+		if(it>='a' && it<='z'){
+			textprintf(screen, font, x+25*i, y, color, "%c", it);
+			cadena[i] =it;
+			cadena[i+1] = '\0';
+			i++;
+		}
+	}while(it != 13 && i < max);
+	return cadena;
+}
 
 
 void crear(){
@@ -79,7 +134,7 @@ void init() {
 	depth = desktop_color_depth();
 	if (depth == 0) depth = 32;
 	set_color_depth(depth);
-	res = set_gfx_mode(GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0);
+	res = set_gfx_mode(GFX_AUTODETECT_WINDOWED, 640, 530, 0, 0);
 	if (res != 0) {
 		allegro_message(allegro_error);
 		exit(-1);

@@ -18,5 +18,5 @@ Background::Background(string background){
 }
 
 void Background::action(){
-	draw_sprite(lienzo,sprite,x,y);
+    draw_sprite(lienzo,sprite,x,y);
 }
