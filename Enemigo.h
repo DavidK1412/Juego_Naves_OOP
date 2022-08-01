@@ -27,7 +27,7 @@ Enemigo::Enemigo(int x, int y, int type){
 	this->alarm = new Alarm[15]();
 	this->type = type;
 	this->cont = 1;
-	this->vida = 50;
+	this->vida = 90;
 }
 
 Enemigo::~Enemigo(){
@@ -40,15 +40,12 @@ Enemigo::~Enemigo(){
 void Enemigo::action(){
 	//dibujos
 	draw_sprite(lienzo,this->sprite,x,y);
-	float b_tam = (50.0/100.0) * vida; // tamaño de la barra de vida
+	float b_tam = (50.0/100.0) * vida; // tamaï¿½o de la barra de vida
 	stretch_sprite(lienzo,b_vida,x,y,b_tam,5); // crea una barra de vida estirando una imagen
-	
 	//crear disparos enemigos
 	if(this->alarm[1].alarm(190)){	
 		balas.push_back(new Bala(x+(sprite->w/2)-3,y,1)); // agrega una bala enemiga a la lista
 	}
-	
-	
 	//colision
 	for(list<Bala*>::iterator it = balas.begin(); it != balas.end(); it++){
 		Bala *b = *it;
@@ -60,7 +57,6 @@ void Enemigo::action(){
 			}	
 		}
 	}
-	
 	this->Movimiento();
 	if(this->vida <= 0 or this->x > SCREEN_W){
 		delete this; // Eliminar nave enemiga si ya no tiene vida o esta fuera del lienzo
@@ -74,27 +70,27 @@ void Enemigo::Movimiento(){
 				x+=5;
 				y+=2;
 			}
-		break;
+		    break;
 		case 1:
 			if(this->alarm[0].alarm(2)){
 				x+= 1.3;
 				y+= cos(x/100);
 			}
-		break;
+		    break;
 		
 		case 2:
 			if(this->alarm[0].alarm(2)){
 				x+= 1.5;
-				
-				if(this->y >= SCREEN_H - (SCREEN_H/3)){cont = -1;}
-				
+				if(this->y >= SCREEN_H - (SCREEN_H/3)){
+                    cont = -1;
+                }
 				if(cont == -1){
 					y+= pow((x-(this->x - SCREEN_H/4))/100,2) * cont;
 				}else{
 					y+= pow(x/100,2);	
 				}
 			}
-		break;
+		    break;
 	} 
 }
 

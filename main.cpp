@@ -1,15 +1,19 @@
 #include <allegro.h>
+#include <iostream>
+
+using namespace std;
+
+#include <list>
+#include <math.h>
 
 BITMAP *lienzo;
-# include <iostream>
-using namespace std;
-# include <list>
-# include <math.h>
-# include "Alarm.h"
-# include "Bala.h"
-# include "Nave.h"
-# include "Enemigo.h"
-# include "Background.h"
+
+#include "Alarm.h"
+#include "Bala.h"
+#include "Personaje.h"
+#include "Enemigo.h"
+#include "Background.h"
+
 Alarm *Timer = new Alarm(); 
 
 void init();
@@ -17,43 +21,43 @@ void deinit();
 void crear();
 void Enemigo_action();
 
-
 int main(){
 	init();
 	
-	lienzo = create_bitmap(SCREEN_W,SCREEN_H);
-	Nave *nave = new Nave();
+	lienzo = create_bitmap(SCREEN_W, SCREEN_H);
+	Personaje *fantasma = new Personaje();
 	Background* background = new Background("fondo.bmp");
 	
 	srand(time(NULL)); // hace que los numeros sean aleatorios
 	
-	while (!key[KEY_ESC] && nave->vida > 0) 
-	{
-		background->action(); // mostrar el fondo
+	while (!key[KEY_ESC] && fantasma->vida > 0){
+		background->action() ; // mostrar el fondo
 		crear();
 		Enemigo_action();
-		if (nave->vida > 0) 	nave->mov(); // mover la nave si su vida es mayor a 0
-		draw_sprite(screen,lienzo,0,0);
-		clear_to_color(lienzo,0x000000);
+		if (fantasma->vida > 0){
+			fantasma->mov(); // mover la nave si su vida es mayor a 0
+		} 	
+		draw_sprite(screen, lienzo ,0 ,0);
+		clear_to_color(lienzo, 0x000000);
 	}
 
 	deinit();
 	return 0;
 }
-END_OF_MAIN()
+END_OF_MAIN();
 
 
 void crear(){
 	static int cont = 0; // cuenta los enemigos que se crean
 	static int type = rand()%3; // crea un numero aleatorio entre el 0 y 2
 	
-	if(cont < 5){
+	if(cont < 6){
 		if(Timer->alarm(180)){
-			Enemigos.push_back(new Enemigo(-80,15,type)); // crear un enemigo random
+			Enemigos.push_back(new Enemigo(-80, 15, type)); // crear un enemigo random
 			cont++;	
 		}
 	}else{
-		if(Timer->alarm(320))		{
+		if(Timer->alarm(320)){
 			cont = 0; //reinicia el contador
 			type = rand()%3;
 		}
